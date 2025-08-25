@@ -1,0 +1,7 @@
+| Site                    | What You Get                          | Example Seed URL                                                                             |
+| ----------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **arXiv**               | Abstracts, paper metadata, categories | [https://arxiv.org/list/cs.AI/recent](https://arxiv.org/list/cs.AI/recent)                   |
+| **bioRxiv**             | Preprints in biology                  | [https://www.biorxiv.org/content/early/recent](https://www.biorxiv.org/content/early/recent) |
+| **ACM Digital Library** | CS papers, abstracts                  | [https://dl.acm.org/journals](https://dl.acm.org/journals)                                   |
+| **Nature News**         | Research summaries, insights          | [https://www.nature.com/news](https://www.nature.com/news)                                   |
+| **ScienceDaily**        | Research news summaries               | [https://www.sciencedaily.com](https://www.sciencedaily.com)                                 |
