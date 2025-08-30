@@ -1,0 +1,7 @@
+# Python Cache File
+__pychache__/
+
+# Virtual Environment
+venv/
+
+

@@ -49,7 +49,6 @@ class ArxivSpider(scrapy.Spider):
                 "updated": entry.find("atom:updated", ns).text,
                 "authors": [ author.find("atom:name", ns).text for author in entry.findall("atom:author", ns)],
                 "link": link,
-                "source_category": response.meta["category"]
+                "source_category": "arxiv"
             }
-            # process_item("test-topic", item)
             yield item
