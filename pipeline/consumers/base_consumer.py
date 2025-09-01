@@ -1,3 +1,4 @@
+
 from confluent_kafka import Consumer, KafkaException
 import json
 import sys

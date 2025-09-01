@@ -4,4 +4,5 @@ __pychache__/
 # Virtual Environment
 venv/
 
-
+# Environment Variables
+.env
