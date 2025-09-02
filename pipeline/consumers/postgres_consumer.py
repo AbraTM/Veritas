@@ -1,6 +1,15 @@
 import logging
+import os
 import psycopg2
 from consumers.base_consumer import BaseConsumer
+from dotenv import load_dotenv
+
+load_dotenv()
+POSTGRES_HOST=os.environ["POSTGRES_HOS"]
+POSTGRES_USER=os.environ["POSTGRES_USER"]
+POSTGRES_PASSWORD=os.environ["POSTGRES_PASSWORD"]
+POSTGRES_PORT=os.environ["POSTGRES_PORT"]
+POSTGRES_DATABASE=os.environ["POSTGRES_DATABASE"]
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -53,3 +62,19 @@ class PostgresConsumer(BaseConsumer):
             super().consume()
         finally:
             self.close_db()
+
+# To run the consumer
+if __name__ == "__main__":
+    consumer = PostgresConsumer(
+        bootstrap_servers="localhost:9092",
+        topic="veritas-pages",
+        group_id="veritas-postgres-consumer",
+        db_config={
+            "host": POSTGRES_HOST,
+            "port": POSTGRES_PORT,
+            "user": POSTGRES_USER,
+            "password": POSTGRES_PASSWORD,
+            "database": POSTGRES_DATABASE
+        }
+    )
+    consumer.consume()

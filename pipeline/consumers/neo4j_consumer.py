@@ -1,6 +1,13 @@
 from consumers.base_consumer import BaseConsumer
 from neo4j import GraphDatabase
+from dotenv import load_dotenv
 import logging
+import os
+
+load_dotenv()
+NEO4J_URI = os.environ["NEO4J_URI"]
+NEO4J_USER = os.environ["NEO4J_USER"]
+NEO4J_PASSWORD = os.environ["NEO4J_PASSWORD"]
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -61,20 +68,13 @@ class Neo4jConsumer(BaseConsumer):
                 MERGE (a:Author {name: author})
                 MERGE (a)-[:WROTE]->(p)
             WITH p
-            MERGE (c:Category {name: $source_category})
+            MERGE (c:Category {name: $source_category}) 
             MERGE (p)-[:BELONGS_TO]->(c)
         """
 
         tx.run(
             query,
-            id=item.get("id"),
-            title=item.get("title"),
-            abstract=item.get("abstract"),
-            published=item.get("published"),
-            updated=item.get("updated"),
-            link=item.get("link"),
-            authors=item.get("authors", []),
-            source_category=item.get("source_category")
+            **item
         )
     
     def consume(self):
@@ -83,3 +83,16 @@ class Neo4jConsumer(BaseConsumer):
             super().consume()
         except Exception as e:
             self.disconnect_from_neo4j()
+
+
+# To run the consumer
+if __name__ == "__main__":
+    consumer = Neo4jConsumer(
+        bootstrap_servers="localhost:9092",
+        topic="veritas-pages",
+        group_id="veritas-neo4j-consumer",
+        neo4j_url=NEO4J_URI,
+        neo4j_auth=(NEO4J_USER, NEO4J_PASSWORD)
+    )
+
+    consumer.consume()

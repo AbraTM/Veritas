@@ -1,5 +1,6 @@
 import scrapy
 import feedparser
+from datetime import datetime
 from w3lib.html import remove_tags
 
 class MediumSpider(scrapy.Spider):
@@ -41,12 +42,14 @@ class MediumSpider(scrapy.Spider):
     def parse(self, response):
         feed = feedparser.parse(response.text)
         for entry in feed.entries:
+            publishDate = datetime.strptime(entry.published, "%a, %d %b %Y %H:%M:%S %Z")
+            iso_publish_date = publishDate.isoformat() + "Z"
             item = {
                 "id": entry.get("id", entry.link),
                 "title": entry.title,
                 "abstract": remove_tags(entry.summary),
-                "published": entry.published,
-                "updated": entry.published,
+                "published": iso_publish_date,
+                "updated": iso_publish_date,
                 "authors": [entry.author] if hasattr(entry, "author") else [],
                 "link": entry.link,
                 "source_category": "medium"

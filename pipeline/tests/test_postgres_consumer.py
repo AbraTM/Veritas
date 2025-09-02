@@ -1,5 +1,14 @@
 from consumers.postgres_consumer import PostgresConsumer
+from dotenv import load_dotenv
 import logging
+import os
+
+load_dotenv()
+POSTGRES_HOST=os.environ["POSTGRES_HOS"]
+POSTGRES_USER=os.environ["POSTGRES_USER"]
+POSTGRES_PASSWORD=os.environ["POSTGRES_PASSWORD"]
+POSTGRES_PORT=os.environ["POSTGRES_PORT"]
+POSTGRES_DATABASE=os.environ["POSTGRES_DATABASE"]
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -10,11 +19,11 @@ if __name__ == "__main__":
         topic="veritas-pages",
         group_id="veritas-postgres-consumer",
         db_config={
-            "host": "localhost",
-            "port": 5432,
-            "user": "postgres",
-            "password": "0000",
-            "database": "Veritas"
+            "host": POSTGRES_HOST,
+            "port": POSTGRES_PORT,
+            "user": POSTGRES_USER,
+            "password": POSTGRES_PASSWORD,
+            "database": POSTGRES_DATABASE
         }
     )
     consumer.consume()

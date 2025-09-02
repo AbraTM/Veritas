@@ -89,7 +89,7 @@ FEED_EXPORT_ENCODING = "utf-8"
 
 # Scrapy Crawler Settings
 ITEM_PIPELINES = {
-    # "crawler.pipelines.KafkaPipeline": 300,
+    "crawler.pipelines.KafkaPipeline": 300,
 }
 
 KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
