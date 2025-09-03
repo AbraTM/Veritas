@@ -1,22 +1,34 @@
 
 from confluent_kafka import Consumer, KafkaException
 import json
-import sys
+import time
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class BaseConsumer:
-    def __init__(self, bootstrap_servers, topic, group_id):
+    def __init__(self, bootstrap_servers, topic, group_id, retries=10, wait=10):
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
         self.group_id = group_id
-        self.consumer = Consumer({
-            "bootstrap.servers": self.bootstrap_servers,
-            "group.id": self.group_id,
-            "auto.offset.reset": "earliest"
-        })
+
+        # Retry Logic for Kafka Connection
+        for attempt in range(retries):
+            try:
+                self.consumer = Consumer({
+                    "bootstrap.servers": self.bootstrap_servers,
+                    "group.id": self.group_id,
+                    "auto.offset.reset": "earliest"
+                })
+                self.consumer.list_topics(timeout=10)
+                logger.info("Connected to Kafka!.")
+                break
+            except KafkaException:
+                logger.warning(f"Kafka not ready, retrying in {wait}s ({attempt + 1}/{retries}).")
+                time.sleep(wait)
+        else:
+            raise RuntimeError("Failed to connect to Kafka after multiple attempts.")
 
     def consume(self):
         self.consumer.subscribe([self.topic])

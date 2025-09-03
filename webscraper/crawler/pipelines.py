@@ -1,5 +1,10 @@
 import json
-from confluent_kafka import Producer
+import time
+import logging
+from confluent_kafka import Producer, KafkaException
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def delivery_report(err, msg):
     if err:
@@ -20,12 +25,23 @@ class KafkaPipeline:
             kafka_topic = crawler.settings.get("KAFKA_TOPIC", "veritas-pages")
         )
 
-    def open_spider(self, spider):
+    def open_spider(self, spider, retries=10, wait=10):
         conf = {
             "bootstrap.servers": self.kafka_bootstrap_servers,
             "client.id": "scrapy-producer"
         }
-        self.producer = Producer(conf)
+        
+        for attempt in range(retries):
+            try:
+                self.producer = Producer(conf)
+                self.producer.list_topics(timeout=10)
+                logger.info("Kafka Connected!.")
+                break
+            except KafkaException:
+                logger.warning(f"Kafka not ready, retrying in {wait}s ({attempt + 1}/{retries})")
+                time.sleep(wait)
+        else:
+            raise RuntimeError("Failed to connect to Kafka after multiple retires.")
     
     def close_spider(self, spider):
         if self.producer:

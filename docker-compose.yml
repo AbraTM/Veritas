@@ -38,6 +38,38 @@ services:
         timeout: 5s
         retries: 5
     
-    webscraper:
+    arxiv_spider:
       build:
-        context:
+        context: ./webscraper
+      container_name: arxiv_spider
+      command: ["sh", "scripts/run_arxiv.sh"]
+
+    github_spider:
+      build:
+        context: ./webscraper
+      container_name: github_spider
+      command: ["sh", "scripts/run_github.sh"]
+    
+    medium_spider:
+      build: 
+        context: ./webscraper
+      container_name: medium_spider
+      command: ["sh", "scripts/run_medium.sh"]
+
+    postgres_consumer:
+      build:
+        context: ./pipeline
+      container_name: postgres_consumer
+      command: ["python", "postgres_consumer.py"]
+
+    neo4j_consumer:
+      build:
+        context: ./pipeline
+      container_name: neo4j_consumer
+      command: ["python", "neo4j_consumer.py"]
+
+    weaviate_consumer:
+      build:
+        context: ./pipeline
+      container_name: weaviate_consumer
+      command: ["python", "weaviate_consumer.py"]
