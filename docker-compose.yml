@@ -19,57 +19,88 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     networks:
-      - app-network
+      - veritas-network
 
-    
-    postgres:
-      image: postgres:15
-      container_name: postgres
-      env_file: ./.env
-      ports:
-        - "${POSTGRES_PORT}:5432"
-      volumes:
-        - postgres_data:/var/lib/postgresql/data
-      networks:
-        - app-network
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-    
-    arxiv_spider:
-      build:
-        context: ./webscraper
-      container_name: arxiv_spider
-      command: ["sh", "scripts/run_arxiv.sh"]
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    env_file: ./.env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - veritas-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  arxiv_spider:
+    build:
+      context: ./webscraper
+    container_name: arxiv_spider
+    command: ["sh", "scripts/run_arxiv.sh"]
+    networks:
+      - veritas-network
+    depends_on:
+      - kafka
 
-    github_spider:
-      build:
-        context: ./webscraper
-      container_name: github_spider
-      command: ["sh", "scripts/run_github.sh"]
-    
-    medium_spider:
-      build: 
-        context: ./webscraper
-      container_name: medium_spider
-      command: ["sh", "scripts/run_medium.sh"]
+  github_spider:
+    build:
+      context: ./webscraper
+    container_name: github_spider
+    command: ["sh", "scripts/run_github.sh"]
+    networks:
+      - veritas-network
+    depends_on:
+      - kafka
 
-    postgres_consumer:
-      build:
-        context: ./pipeline
-      container_name: postgres_consumer
-      command: ["python", "postgres_consumer.py"]
+  medium_spider:
+    build: 
+      context: ./webscraper
+    container_name: medium_spider
+    command: ["sh", "scripts/run_medium.sh"]
+    networks:
+      - veritas-network
+    depends_on:
+      - kafka
 
-    neo4j_consumer:
-      build:
-        context: ./pipeline
-      container_name: neo4j_consumer
-      command: ["python", "neo4j_consumer.py"]
+  postgres_consumer:
+    build:
+      context: ./pipeline
+    container_name: postgres_consumer
+    command: ["python", "consumers/postgres_consumer.py"]
+    networks:
+      - veritas-network
+    depends_on:
+      - kafka
+      - postgres
 
-    weaviate_consumer:
-      build:
-        context: ./pipeline
-      container_name: weaviate_consumer
-      command: ["python", "weaviate_consumer.py"]
+  neo4j_consumer:
+    build:
+      context: ./pipeline
+    container_name: neo4j_consumer
+    command: ["python", "consumers/neo4j_consumer.py"]
+    networks:
+      - veritas-network
+    depends_on:
+      - kafka
+
+  weaviate_consumer:
+    build:
+      context: ./pipeline
+    container_name: weaviate_consumer
+    command: ["python", "consumers/weaviate_consumer.py"]
+    networks:
+      - veritas-network
+    depends_on:
+      - kafka
+
+networks:
+  veritas-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

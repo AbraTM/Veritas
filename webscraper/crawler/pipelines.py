@@ -41,7 +41,7 @@ class KafkaPipeline:
                 logger.warning(f"Kafka not ready, retrying in {wait}s ({attempt + 1}/{retries})")
                 time.sleep(wait)
         else:
-            raise RuntimeError("Failed to connect to Kafka after multiple retires.")
+            raise RuntimeError("Failed to connect to Kafka after multiple retries.")
     
     def close_spider(self, spider):
         if self.producer:
