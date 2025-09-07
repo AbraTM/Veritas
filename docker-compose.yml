@@ -1,25 +1,36 @@
-version: "3.9"
-
 services:
   kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: kafka
     ports:
       - "9092:9092"
+      - "9093:9093"
     environment:
       KAFKA_NODE_ID: 1
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
-      KAFKA_PROCESS_ROLES: 'broker,controller'
-      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
-      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://kafka:9093'
-      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
-      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      CLUSTER_ID: 4L6g3nShT-eMCtK--X86sw
+    volumes:
+      - kafka_data:/var/lib/kafka/data
     networks:
       - veritas-network
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   postgres:
     image: postgres:15
@@ -29,43 +40,50 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker-init-scripts:/docker-entrypoint-initdb.d
     networks:
       - veritas-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d Veritas"]
       interval: 10s
       timeout: 5s
-      retries: 5
-  
+      retries: 10
+
   arxiv_spider:
     build:
       context: ./webscraper
     container_name: arxiv_spider
-    command: ["sh", "scripts/run_arxiv.sh"]
+    command: ["sh", "-c", "sh scripts/run_arxiv.sh"]
     networks:
       - veritas-network
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+    restart: on-failure
 
   github_spider:
     build:
       context: ./webscraper
     container_name: github_spider
-    command: ["sh", "scripts/run_github.sh"]
+    command: ["sh", "-c", "sh scripts/run_github.sh"]
     networks:
       - veritas-network
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+    restart: on-failure
 
   medium_spider:
-    build: 
+    build:
       context: ./webscraper
     container_name: medium_spider
-    command: ["sh", "scripts/run_medium.sh"]
+    command: ["sh", "-c", "sh scripts/run_medium.sh"]
     networks:
       - veritas-network
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+    restart: on-failure
 
   postgres_consumer:
     build:
@@ -75,8 +93,11 @@ services:
     networks:
       - veritas-network
     depends_on:
-      - kafka
-      - postgres
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: on-failure
 
   neo4j_consumer:
     build:
@@ -86,7 +107,9 @@ services:
     networks:
       - veritas-network
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+    restart: on-failure
 
   weaviate_consumer:
     build:
@@ -96,7 +119,9 @@ services:
     networks:
       - veritas-network
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+    restart: on-failure
 
 networks:
   veritas-network:
@@ -104,3 +129,4 @@ networks:
 
 volumes:
   postgres_data:
+  kafka_data:

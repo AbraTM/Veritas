@@ -49,7 +49,7 @@ class GitHubSpider(scrapy.Spider):
             # GitHub Rate Limiting
             remaining = int(response.headers.get("X-RateLimit-Remaining", 1))
             if remaining == 0:
-                reset = int(response.headers.get("X-RateLimit-Reset". time.time()+60))
+                reset = int(response.headers.get("X-RateLimit-Reset", time.time()+60))
                 wait = reset - int(time.time()) + 1
                 self.logger.info(f"Rate limit hit. Waiting {wait} seconds..")
                 time.sleep(wait)

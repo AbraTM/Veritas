@@ -1,6 +1,7 @@
 import logging
 import os
 import psycopg2
+import time
 from consumers.base_consumer import BaseConsumer
 from dotenv import load_dotenv
 
@@ -21,10 +22,17 @@ class PostgresConsumer(BaseConsumer):
         self.conn = None
         self.cursor = None
 
-    def open_db(self):
-        self.conn = psycopg2.connect(**self.db_config)
-        self.cursor = self.conn.cursor()
-        logger.info("Connected to PostgreSQL Database.")
+    def open_db(self, retries=10, wait=10):
+        for attempt in retries:
+            try:
+                self.conn = psycopg2.connect(**self.db_config)
+                self.cursor = self.conn.cursor()
+                logger.info(f"Connected to PostgreSQL Database.")
+            except Exception as e:
+                logger.warning(f"Couldn't cconnect to Vertias Postgres DB, trying again in {wait}s, ({attempt + 1}/{retries}).\n{e}")
+                time.sleep(wait)
+        else: 
+            logger.error("Couldn't connect to Veritas Postgres DB.")
     
     def close_db(self):
         if self.cursor:

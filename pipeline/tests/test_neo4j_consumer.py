@@ -9,7 +9,7 @@ NEO4J_PASSWORD = os.environ["NEO4J_PASSWORD"]
 
 if __name__ == "__main__":
     consumer = Neo4jConsumer(
-        bootstrap_servers="localhost:9092",
+        bootstrap_servers="kafka:9092",
         topic="veritas-pages",
         group_id="veritas-neo4j-consumer",
         neo4j_url=NEO4J_URI,

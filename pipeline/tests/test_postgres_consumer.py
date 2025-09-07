@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
     
 if __name__ == "__main__":
     consumer = PostgresConsumer(
-        bootstrap_servers="localhost:9092",
+        bootstrap_servers="kafka:9092",
         topic="veritas-pages",
         group_id="veritas-postgres-consumer",
         db_config={

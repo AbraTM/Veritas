@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     consumer = WeaviateConsumer(
-        bootstrap_servers="localhost:9092",
+        bootstrap_servers="kafka:9092",
         topic="veritas-pages",
         group_id="veritas-weaviate-consumer",
         cluster_url=os.environ["WEAVIATE_URL"],
