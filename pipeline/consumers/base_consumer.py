@@ -55,3 +55,12 @@ class BaseConsumer:
 
     def process_item(self, item):
         raise NotImplementedError
+
+
+if __name__ == "__main__":
+    consumer = BaseConsumer(
+        bootstrap_servers="kafka:9092",
+        topic="veritas-pages",
+        group_id="veritas-base-consumer"
+    )
+    consumer.consume()
