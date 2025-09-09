@@ -1,15 +1,16 @@
 services:
   kafka:
-    image: confluentinc/cp-kafka:7.6.0
+    image: apache/kafka:4.1.0
     container_name: kafka
+    hostname: kafka
     ports:
       - "9092:9092"
       - "9093:9093"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://kafka:29093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
@@ -20,17 +21,21 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_LOG_DIRS: /var/lib/kafka/data
-      CLUSTER_ID: 4L6g3nShT-eMCtK--X86sw
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: '-Xmx512m -Xms512m'
     volumes:
       - kafka_data:/var/lib/kafka/data
     networks:
       - veritas-network
     healthcheck:
-      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "nc -z localhost 9092 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
       start_period: 30s
+
+
 
   postgres:
     image: postgres:15
@@ -89,7 +94,7 @@ services:
     build:
       context: ./pipeline
     container_name: postgres_consumer
-    command: ["python", "consumers/postgres_consumer.py"]
+    command: ["python", "-m", "consumers.postgres_consumer"]
     networks:
       - veritas-network
     depends_on:
@@ -103,7 +108,7 @@ services:
     build:
       context: ./pipeline
     container_name: neo4j_consumer
-    command: ["python", "consumers/neo4j_consumer.py"]
+    command: ["python", "-m", "consumers.neo4j_consumer"]
     networks:
       - veritas-network
     depends_on:
@@ -115,7 +120,7 @@ services:
     build:
       context: ./pipeline
     container_name: weaviate_consumer
-    command: ["python", "consumers/weaviate_consumer.py"]
+    command: ["python", "-m", "consumers.weaviate_consumer"]
     networks:
       - veritas-network
     depends_on:

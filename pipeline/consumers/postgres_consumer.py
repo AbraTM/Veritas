@@ -6,7 +6,7 @@ from consumers.base_consumer import BaseConsumer
 from dotenv import load_dotenv
 
 load_dotenv()
-POSTGRES_HOST=os.environ["POSTGRES_HOS"]
+POSTGRES_HOST=os.environ["POSTGRES_HOST"]
 POSTGRES_USER=os.environ["POSTGRES_USER"]
 POSTGRES_PASSWORD=os.environ["POSTGRES_PASSWORD"]
 POSTGRES_PORT=os.environ["POSTGRES_PORT"]
@@ -23,16 +23,17 @@ class PostgresConsumer(BaseConsumer):
         self.cursor = None
 
     def open_db(self, retries=10, wait=10):
-        for attempt in retries:
+        for attempt in range(retries):
             try:
                 self.conn = psycopg2.connect(**self.db_config)
                 self.cursor = self.conn.cursor()
-                logger.info(f"Connected to PostgreSQL Database.")
+                logger.info("Connected to PostgreSQL Database.")
+                break
             except Exception as e:
-                logger.warning(f"Couldn't cconnect to Vertias Postgres DB, trying again in {wait}s, ({attempt + 1}/{retries}).\n{e}")
+                logger.warning(f"Couldn't connect to Veritas Postgres DB, retrying in {wait}s, ({attempt + 1}/{retries}).\n{e}")
                 time.sleep(wait)
-        else: 
-            logger.error("Couldn't connect to Veritas Postgres DB.")
+        else:
+            logger.error("Couldn't connect to Veritas Postgres DB after multiple attempts.")
     
     def close_db(self):
         if self.cursor:
@@ -74,7 +75,7 @@ class PostgresConsumer(BaseConsumer):
 # To run the consumer
 if __name__ == "__main__":
     consumer = PostgresConsumer(
-        bootstrap_servers="localhost:9092",
+        bootstrap_servers="kafka:9092",
         topic="veritas-pages",
         group_id="veritas-postgres-consumer",
         db_config={

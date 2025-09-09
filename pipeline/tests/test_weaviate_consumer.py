@@ -1,4 +1,4 @@
-from consumers.weavite_consumer import WeaviateConsumer
+from pipeline.consumers.weaviate_consumer import WeaviateConsumer
 from dotenv import load_dotenv
 import logging
 import os

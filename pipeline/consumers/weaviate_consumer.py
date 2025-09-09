@@ -5,7 +5,7 @@ import logging
 import os
 from consumers.base_consumer import BaseConsumer
 from processors.embeddings import get_embedding_model
-from dotenv import load_dotenv()
+from dotenv import load_dotenv
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -57,19 +57,6 @@ class WeaviateConsumer(BaseConsumer):
                 logger.info(f"Collection '{self.class_name}' created successfully.")
             else:
                 logger.info(f"Collection '{self.class_name}' already exists.")
-            
-            # # Initialize the collection object
-            # self.collection = self.client.collections.get(self.class_name)
-            
-            # # Verify the collection is actually accessible
-            # try:
-            #     # Test the collection by checking if it exists and is accessible
-            #     collection_info = self.collection.config.get()
-            #     logger.info(f"Collection '{self.class_name}' initialized successfully. Properties: {len(collection_info.properties)}")
-            # except Exception as e:
-            #     logger.error(f"Collection '{self.class_name}' exists but is not accessible: {e}")
-            #     raise
-            
         except Exception as e:
             logger.error(f"Error connecting to Weaviate: {e}")
             if self.client:
@@ -120,7 +107,7 @@ class WeaviateConsumer(BaseConsumer):
 # To run the consumer
 if __name__ == "__main__":
     consumer = WeaviateConsumer(
-        bootstrap_servers="localhost:9092",
+        bootstrap_servers="kafka:9092",
         topic="veritas-pages",
         group_id="veritas-weaviate-consumer",
         cluster_url=os.environ["WEAVIATE_URL"],

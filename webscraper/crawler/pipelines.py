@@ -21,7 +21,7 @@ class KafkaPipeline:
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
-            kafka_bootstrap_servers = crawler.settings.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
+            kafka_bootstrap_servers = crawler.settings.get("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092"),
             kafka_topic = crawler.settings.get("KAFKA_TOPIC", "veritas-pages")
         )
 
