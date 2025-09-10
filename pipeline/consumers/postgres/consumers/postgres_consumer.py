@@ -27,6 +27,22 @@ class PostgresConsumer(BaseConsumer):
             try:
                 self.conn = psycopg2.connect(**self.db_config)
                 self.cursor = self.conn.cursor()
+                self.cursor.execute(
+                    """ 
+                        CREATE TABLE IF NOT EXISTS pages (
+                            id TEXT PRIMARY KEY,  
+                            title TEXT,
+                            abstract TEXT,
+                            published TIMESTAMP WITH TIME ZONE,
+                            updated TIMESTAMP WITH TIME ZONE,
+                            authors TEXT[], 
+                            link TEXT UNIQUE,
+                            source_category TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    """
+                )
+                logger.info("")
                 logger.info("Connected to PostgreSQL Database.")
                 break
             except Exception as e:
@@ -50,6 +66,7 @@ class PostgresConsumer(BaseConsumer):
                     ON CONFLICT (link) DO NOTHING      
                 """
             , (
+                item.get("id"),
                 item.get("title"), 
                 item.get("abstract"), 
                 item.get("published"), 

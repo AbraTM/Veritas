@@ -1,4 +1,4 @@
-from consumers.neo4j_consumer import Neo4jConsumer
+from consumers.neo4j.consumer.neo4j_consumer import Neo4jConsumer
 from dotenv import load_dotenv
 import os
 

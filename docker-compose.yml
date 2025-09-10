@@ -92,7 +92,8 @@ services:
 
   postgres_consumer:
     build:
-      context: ./pipeline
+      context: ./pipeline/consumers
+      dockerfile: ./postgres/Dockerfile
     container_name: postgres_consumer
     command: ["python", "-m", "consumers.postgres_consumer"]
     networks:
@@ -106,7 +107,8 @@ services:
 
   neo4j_consumer:
     build:
-      context: ./pipeline
+      context: ./pipeline/consumers
+      dockerfile: ./neo4j/Dockerfile
     container_name: neo4j_consumer
     command: ["python", "-m", "consumers.neo4j_consumer"]
     networks:
@@ -118,7 +120,8 @@ services:
 
   weaviate_consumer:
     build:
-      context: ./pipeline
+      context: ./pipeline/consumers
+      dockerfile: ./weaviate/Dockerfile
     container_name: weaviate_consumer
     command: ["python", "-m", "consumers.weaviate_consumer"]
     networks:

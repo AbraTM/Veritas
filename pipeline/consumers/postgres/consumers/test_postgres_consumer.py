@@ -1,4 +1,4 @@
-from consumers.postgres_consumer import PostgresConsumer
+from consumers.postgres.postgres_consumer import PostgresConsumer
 from dotenv import load_dotenv
 import logging
 import os
