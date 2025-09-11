@@ -110,7 +110,7 @@ services:
       context: ./pipeline/consumers
       dockerfile: ./neo4j/Dockerfile
     container_name: neo4j_consumer
-    command: ["python", "-m", "consumers.neo4j_consumer"]
+    command: sh -c "sleep 20 && python -m consumers.neo4j_consumer"
     networks:
       - veritas-network
     depends_on:

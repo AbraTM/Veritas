@@ -26,6 +26,7 @@ class PostgresConsumer(BaseConsumer):
         for attempt in range(retries):
             try:
                 self.conn = psycopg2.connect(**self.db_config)
+                logger.info("Connected to PostgreSQL Database.")
                 self.cursor = self.conn.cursor()
                 self.cursor.execute(
                     """ 
@@ -42,8 +43,8 @@ class PostgresConsumer(BaseConsumer):
                         )
                     """
                 )
-                logger.info("")
-                logger.info("Connected to PostgreSQL Database.")
+                self.conn.commit()
+                logger.info("Created / Connected to table 'pages' successfuly.")
                 break
             except Exception as e:
                 logger.warning(f"Couldn't connect to Veritas Postgres DB, retrying in {wait}s, ({attempt + 1}/{retries}).\n{e}")
@@ -61,8 +62,8 @@ class PostgresConsumer(BaseConsumer):
         try:
             self.cursor.execute(
                 """
-                    INSERT INTO pages (title, abstract, published, updated, authors, link, source_category)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)  
+                    INSERT INTO pages (id, title, abstract, published, updated, authors, link, source_category)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)  
                     ON CONFLICT (link) DO NOTHING      
                 """
             , (
