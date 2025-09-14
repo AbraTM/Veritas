@@ -1,0 +1,93 @@
+[
+    {
+        "id": "http://arxiv.org/abs/2508.21816v1",
+        "title": "The Demon is in Ambiguity: Revisiting Situation Recognition with Single\n  Positive Multi-Label Learning",
+        "abstract": "Context recognition (SR) is a fundamental task in computer vision that aims\nto extract structured semantic summaries from images by identifying key events\nand their associated entities. Specifically, given an input image, the model\nmust first classify the main visual events (verb classification), then identify\nthe participating entities and their semantic roles (semantic role labeling),\nand finally localize these entities in the image (semantic role localization).\nExisting methods treat verb classification as a single-label problem, but we\nshow through a comprehensive analysis that this formulation fails to address\nthe inherent ambiguity in visual event recognition, as multiple verb categories\nmay reasonably describe the same image. This paper makes three key\ncontributions: First, we reveal through empirical analysis that verb\nclassification is inherently a multi-label problem due to the ubiquitous\nsemantic overlap between verb categories. Second, given the impracticality of\nfully annotating large-scale datasets with multiple labels, we propose to\nreformulate verb classification as a single positive multi-label learning\n(SPMLL) problem - a novel perspective in SR research. Third, we design a\ncomprehensive multi-label evaluation benchmark for SR that is carefully\ndesigned to fairly evaluate model performance in a multi-label setting. To\naddress the challenges of SPMLL, we futher develop the Graph Enhanced Verb\nMultilayer Perceptron (GE-VerbMLP), which combines graph neural networks to\ncapture label correlations and adversarial training to optimize decision\nboundaries. Extensive experiments on real-world datasets show that our approach\nachieves more than 3\\% MAP improvement while remaining competitive on\ntraditional top-1 and top-5 accuracy metrics.",
+        "published": "2025-08-29T17:51:55Z",
+        "updated": "2025-08-29T17:51:55Z",
+        "authors": [
+            "Yiming Lin",
+            "Yuchen Niu",
+            "Shang Wang",
+            "Kaizhu Huang",
+            "Qiufeng Wang",
+            "Xiao-Bo Jin"
+        ],
+        "link": "http://arxiv.org/abs/2508.21816v1",
+        "source_category": "arxiv"
+    },
+    {
+        "id": "http://arxiv.org/abs/2508.21803v1",
+        "title": "Automated Clinical Problem Detection from SOAP Notes using a\n  Collaborative Multi-Agent LLM Architecture",
+        "abstract": "Accurate interpretation of clinical narratives is critical for patient care,\nbut the complexity of these notes makes automation challenging. While Large\nLanguage Models (LLMs) show promise, single-model approaches can lack the\nrobustness required for high-stakes clinical tasks. We introduce a\ncollaborative multi-agent system (MAS) that models a clinical consultation team\nto address this gap. The system is tasked with identifying clinical problems by\nanalyzing only the Subjective (S) and Objective (O) sections of SOAP notes,\nsimulating the diagnostic reasoning process of synthesizing raw data into an\nassessment. A Manager agent orchestrates a dynamically assigned team of\nspecialist agents who engage in a hierarchical, iterative debate to reach a\nconsensus. We evaluated our MAS against a single-agent baseline on a curated\ndataset of 420 MIMIC-III notes. The dynamic multi-agent configuration\ndemonstrated consistently improved performance in identifying congestive heart\nfailure, acute kidney injury, and sepsis. Qualitative analysis of the agent\ndebates reveals that this structure effectively surfaces and weighs conflicting\nevidence, though it can occasionally be susceptible to groupthink. By modeling\na clinical team's reasoning process, our system offers a promising path toward\nmore accurate, robust, and interpretable clinical decision support tools.",
+        "published": "2025-08-29T17:31:24Z",
+        "updated": "2025-08-29T17:31:24Z",
+        "authors": [
+            "Yeawon Lee",
+            "Xiaoyang Wang",
+            "Christopher C. Yang"
+        ],
+        "link": "http://arxiv.org/abs/2508.21803v1",
+        "source_category": "arxiv"
+    },
+    {
+        "id": "mudler/LocalAI",
+        "title": "LocalAI",
+        "abstract": ":robot: The free, Open Source alternative to OpenAI, Claude and others. Self-hosted and local-first. Drop-in replacement for OpenAI,  running on consumer-grade hardware. No GPU required. Runs gguf, transformers, diffusers and many more models architectures. Features: Generate Text, Audio, Video, Images, Voice Cloning, Distributed, P2P inference",
+        "published": "2023-03-18T22:58:02Z",
+        "updated": "2025-09-02T07:18:23Z",
+        "authors": [
+            "mudler"
+        ],
+        "link": "https://github.com/mudler/LocalAI",
+        "source_category": "github"
+    },
+    {
+        "id": "Phylmox/OpenBB-finance",
+        "title": "OpenBB-finance",
+        "abstract": "Investment Research for Everyone, Everywhere.",
+        "published": "2025-06-17T21:28:14Z",
+        "updated": "2025-09-02T07:12:03Z",
+        "authors": [
+            "Phylmox"
+        ],
+        "link": "https://github.com/Phylmox/OpenBB-finance",
+        "source_category": "github"
+    },
+    {
+        "id": "stacklok/toolhive",
+        "title": "toolhive",
+        "abstract": "ToolHive makes deploying MCP servers easy, secure and fun",
+        "published": "2025-03-12T14:49:15Z",
+        "updated": "2025-09-02T07:11:48Z",
+        "authors": [
+            "stacklok"
+        ],
+        "link": "https://github.com/stacklok/toolhive",
+        "source_category": "github"
+    },
+    {
+        "id": "https://medium.com/p/459e1538d582",
+        "title": "Insertion Sort in Java Explained: Algorithm, Code & Complexity",
+        "abstract": "Sorting is one of the most common operations in computer science, and there are multiple algorithms to get it done.Continue reading on softAai Blogs »",
+        "published": "2025-09-02T01:00:29Z",
+        "updated": "2025-09-02T01:00:29Z",
+        "authors": [
+            "amol pawar"
+        ],
+        "link": "https://medium.com/softaai-blogs/insertion-sort-in-java-explained-algorithm-code-complexity-459e1538d582?source=rss------data_structures-5",
+        "source_category": "medium"
+    },
+    {
+        "id": "https://medium.com/p/d325ddfeaaae",
+        "title": "Doubly Linked List in Java Explained: A Beginner’s Guide",
+        "abstract": "When working with data structures in Java, choosing the right type of linked list can significantly impact performance and flexibility&#x2026;Continue reading on softAai Blogs »",
+        "published": "2025-09-02T00:55:26Z",
+        "updated": "2025-09-02T00:55:26Z",
+        "authors": [
+            "amol pawar"
+        ],
+        "link": "https://medium.com/softaai-blogs/doubly-linked-list-in-java-explained-a-beginners-guide-d325ddfeaaae?source=rss------data_structures-5",
+        "source_category": "medium"
+    }
+]
