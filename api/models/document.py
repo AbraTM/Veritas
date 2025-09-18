@@ -14,3 +14,6 @@ class DocumentResponse(BaseModel):
 
 class SemanticDocumentResponse(DocumentResponse):
     certainty: float
+
+class KeywordDocumentResponse(DocumentResponse):
+    score: float

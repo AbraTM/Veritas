@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
-from models.document import DocumentResponse, SemanticDocumentResponse
+from models.document import DocumentResponse, SemanticDocumentResponse, KeywordDocumentResponse
 from dbs.postgres.config import get_postgres_db
 from dbs.weaviate.config import get_weaviate_client
 from datetime import datetime
@@ -102,7 +102,7 @@ async def get_document_metadata(
 # Semantic Search from Weaviate Vector DB
 @router.get("/vector/", response_model=list[SemanticDocumentResponse], tags=["Vector Search"])
 async def semantic_search(
-    semantic_search: str,
+    semantic_search: str | None = Query(None),
     weaviate_db: weaviate.WeaviateClient = Depends(get_weaviate_client)
 ):
     documents = weaviate_db.collections.use("Page")
@@ -128,3 +128,27 @@ async def semantic_search(
     return result
 
 # Keyword Search from Weaviate Vector DB
+@router.get("/keyword/", response_model=list[KeywordDocumentResponse], tags=["Vector Search"])
+async def keyword_search(
+    args: list[str] | None = Query(None),
+    weaviate_db: weaviate.WeaviateClient = Depends(get_weaviate_client)
+):
+    documents = weaviate_db.collections.use("Page")
+    response = documents.query.bm25(
+        query=" ".join(args),
+        return_metadata=MetadataQuery(score=True, explain_score=True)
+    )
+    result = []
+    for o in response.objects:
+        result.append({
+            "id": str(o.uuid),
+            "title": o.properties.get("title"),
+            "abstract": o.properties.get("abstract"),
+            "published": o.properties.get("published"),
+            "updated": o.properties.get("updated"),
+            "authors": o.properties.get("authors"),
+            "link": o.properties.get("link"),
+            "source_category": o.properties.get("source_category"),
+            "score": o.metadata.score,
+        })
+    return result
