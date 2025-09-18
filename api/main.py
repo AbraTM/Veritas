@@ -8,11 +8,11 @@ from routes.document import router as DocumentRouter
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_postgres()
-    await init_neo4j_driver()
+    # await init_neo4j_driver()
     init_weaviate_client()
     yield
     await close_postgres()
-    await close_neo4j_driver()
+    # await close_neo4j_driver()
     close_weaviate_client()
 
 app = FastAPI(lifespan=lifespan)

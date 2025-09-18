@@ -1,8 +1,9 @@
 from pydantic import BaseModel, HttpUrl
 from datetime import datetime
+from uuid import UUID
 
 class DocumentResponse(BaseModel):
-    id: str
+    id: UUID
     title: str
     abstract: str
     published: datetime
@@ -11,5 +12,5 @@ class DocumentResponse(BaseModel):
     link: HttpUrl
     source_category: str
 
-    class Config:
-        from_attributes=True
+class SemanticDocumentResponse(DocumentResponse):
+    certainty: float
